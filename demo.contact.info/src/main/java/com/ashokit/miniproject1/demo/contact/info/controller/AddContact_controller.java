@@ -9,7 +9,7 @@ import com.ashokit.miniproject1.demo.contact.info.entity.Contact;
 @Controller
 public class AddContact_controller {
 	
-	@GetMapping("/add")
+	@GetMapping("/")
 	public String addContact(@ModelAttribute("add") Contact contact) {
 		
 		return "addContact";

@@ -3,6 +3,9 @@ package com.ashokit.miniproject1.demo.contact.info.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.ashokit.miniproject1.demo.contact.info.dao.Contact_dao;
@@ -20,12 +23,33 @@ public class Contact_Service_Impl implements Contact_Service {
 		this.contact_dao = contact_dao;
 	}
 
-	@Override
-	public List<Contact> findAll() {
-		
-		return contact_dao.findAll();
-	}
+	/*
+	 * @Override public List<Contact> findAll() {
+	 * 
+	 * Contact contact = new Contact(); contact.setDeleted(false);
+	 * 
+	 * Example<Contact> ct = Example.of(contact);
+	 * 
+	 * return contact_dao.findAll(ct); }
+	 */
 
+	
+	@Override
+	public Page<Contact> findAll(int pageNo, int pageSize) {
+		
+		Contact contact = new Contact();
+		contact.setDeleted(false);
+		
+		Example<Contact> ct = Example.of(contact);
+		
+		PageRequest pagerequest = PageRequest.of(pageNo, pageSize);
+		
+		Page<Contact> findAll = contact_dao.findAll(ct, pagerequest);
+		
+		return findAll;
+	}
+	
+	
 	@Override
 	public Contact findbyId(Integer Contact_id) throws NotFoundException {
 		
@@ -42,6 +66,7 @@ public class Contact_Service_Impl implements Contact_Service {
 		
 		if(((contact.getName()!=null) && (contact.getEmail()!= null) && (contact.getNumber()!=null)))
 				{
+			contact.setDeleted(false);
 			contact_dao.save(contact);
 			return true;
 		}
@@ -52,10 +77,13 @@ public class Contact_Service_Impl implements Contact_Service {
 	@Override
 	public boolean deleteContact(Contact contact) {
 		
-		contact_dao.delete(contact);
+		contact.setDeleted(true);
+		contact_dao.save(contact);
 		
 		return true;
 		}
+
+	
 
 		
 
